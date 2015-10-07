@@ -61,15 +61,14 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
     private ListView mList;
     private TextView mTextView;
     private OvalControl mOvalControl;
-
     private ConvenienceRobot mRobot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DiscoveryAgentClassic.getInstance().addRobotStateListener(this);
-        DiscoveryAgentClassic.getInstance().addDiscoveryListener(this);
+        DualStackDiscoveryAgent.getInstance().addRobotStateListener(this);
+        DualStackDiscoveryAgent.getInstance().addDiscoveryListener(this);
         initToolbar();
         initViews();
     }
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
 
     private void startRobotDiscovery() {
         try {
-            DiscoveryAgentClassic.getInstance().startDiscovery( this );
+            DualStackDiscoveryAgent.getInstance().startDiscovery( this );
         } catch( DiscoveryException e ) {
             Log.e("Sphero", e.getMessage());
             e.printStackTrace();
@@ -202,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
     }
 
     private void moveRobot() {
-        mRobot.drive( mRobot.getLastHeading(), 0.3f );
+        mRobot.drive(mRobot.getLastHeading(), 1.0f);
     }
 
     private void resetRobot() {
@@ -225,32 +224,28 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
 
         //Set the back LED to full brightness
         macro.addCommand( new BackLED( 255, 0 ) );
+
         macro.addCommand( new RGB( 255, 0, 0, 0 ) );
         macro.addCommand( new Fade( 0, 0, 255, 2500 ) );
 
-
         //Loop through rotating the robot
         macro.addCommand( new LoopStart( 5 ) );
-        macro.addCommand(new RotateOverTime(360, 500));
-        macro.addCommand(new Delay(500));
-        macro.addCommand(new LoopEnd());
+        macro.addCommand( new RotateOverTime( 360, 500 ) );
+        macro.addCommand( new Delay(500 ) );
+        macro.addCommand( new LoopEnd() );
 
         //Dim the back LED
         macro.addCommand(new BackLED(0, 0));
 
         //Send the macro to the robot and play
         macro.setMode(MacroObject.MacroObjectMode.Normal);
-
         mRobot.loadMacro(macro);
         mRobot.playMacro();
     }
 
     private void loadOvalProgram() {
         String program = null;
-        try {
-            program = getOvalProgram( getAssets().open( "sample.oval" ) );
-        } catch( Exception e ) {}
-
+        program = getOvalProgram( "sample.oval" );
         if( program != null ) {
             mOvalControl.sendOval( program );
         }
@@ -270,44 +265,62 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
     public void handleAsyncMessage(AsyncMessage asyncMessage, Robot robot) {
         if (asyncMessage instanceof DeviceSensorAsyncMessage) {
             DeviceSensorAsyncMessage message = (DeviceSensorAsyncMessage) asyncMessage;
-            double accelerometerX = message.getAsyncData().get(0).getAccelerometerData().getFilteredAcceleration().x;
-            double accelerometerY = message.getAsyncData().get(0).getAccelerometerData().getFilteredAcceleration().y;
-            double accelerometerZ = message.getAsyncData().get(0).getAccelerometerData().getFilteredAcceleration().z;
+            double accelerometerX = message.getAsyncData().get(0).
+                    getAccelerometerData().getFilteredAcceleration().x;
+            double accelerometerY = message.getAsyncData().get(0)
+                    .getAccelerometerData().getFilteredAcceleration().y;
+            double accelerometerZ = message.getAsyncData().get(0)
+                    .getAccelerometerData().getFilteredAcceleration().z;
 
-            double gyroX = message.getAsyncData().get(0).getGyroData().getRotationRateFiltered().x;
-            double gyroY = message.getAsyncData().get(0).getGyroData().getRotationRateFiltered().y;
-            double gyroZ = message.getAsyncData().get(0).getGyroData().getRotationRateFiltered().z;
+            double gyroX = message.getAsyncData().get(0)
+                    .getGyroData().getRotationRateFiltered().x;
+            double gyroY = message.getAsyncData().get(0)
+                    .getGyroData().getRotationRateFiltered().y;
+            double gyroZ = message.getAsyncData().get(0)
+                    .getGyroData().getRotationRateFiltered().z;
 
-            mTextView.setText( getString( R.string.display_sensor_data, accelerometerX, accelerometerY, accelerometerZ, gyroX, gyroY, gyroZ ) );
+            mTextView.setText( getString( R.string.display_sensor_data,
+                    accelerometerX,
+                    accelerometerY,
+                    accelerometerZ,
+                    gyroX,
+                    gyroY,
+                    gyroZ ) );
         }
     }
 
     @Override
     public void handleRobotsAvailable(List<Robot> list) {
-        String robots = "";
         for( Robot robot : list ) {
-               robots += robot.getName() + "\n";
+               Log.e( "Sphero", "Robot found: " + robot.getName() );
         }
-        mTextView.setText( robots );
     }
 
-    public String getOvalProgram( InputStream inputStream ) throws IOException, MacroCommandCreationException {
-
-        if( inputStream == null ) {
+    public String getOvalProgram( String file ) {
+        if( file == null || "".equals( file ) ) {
             return null;
         }
 
-        ByteArrayOutputStream bos= new ByteArrayOutputStream();
+        try {
+            InputStream inputStream = getAssets().open(file);
+            if (inputStream == null) {
+                return null;
+            }
 
-        int next = inputStream.read();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        while (next > -1){
-            bos.write(next);
-            next= inputStream.read();
+            int next = inputStream.read();
+
+            while (next > -1) {
+                bos.write(next);
+                next = inputStream.read();
+            }
+
+            byte[] bytes = bos.toByteArray();
+            return new String(bytes);
+        } catch( IOException e ) {
+            return null;
         }
-
-        byte[] bytes = bos.toByteArray();
-        return new String(bytes);
     }
 
     @Override
