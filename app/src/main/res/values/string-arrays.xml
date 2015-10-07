@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="robot_actions">
+        <item>@string/robot_action_stop</item>
+        <item>@string/robot_action_led</item>
+        <item>@string/robot_action_drive</item>
+        <item>@string/robot_action_request_sensors</item>
+        <item>@string/robot_action_macro</item>
+        <item>@string/robot_action_oval</item>
+    </string-array>
+
+</resources>

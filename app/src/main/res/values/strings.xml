@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Big Android BBQ - Sphero</string>
+
+    <string name="robot_action_led">Change LED</string>
+    <string name="robot_action_drive">Drive Forward</string>
+    <string name="robot_action_stop">Stop</string>
+    <string name="robot_action_request_sensors">Request Sensor Data</string>
+    <string name="robot_action_macro">Run Macro</string>
+    <string name="robot_action_oval">Upload Oval Program</string>
+
+    <string name="display_sensor_data">Accelerometer\n\nX: %1$s\nY: %2$s\nZ: %3$s\n\nGyroscope\n\nX: %4$s\nY: %5$s\nZ: %6$s</string>
+</resources>

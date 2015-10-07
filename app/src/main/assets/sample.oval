@@ -1,0 +1,62 @@
+declare yield DoDelay(float duration);
+
+
+declare yield DoFade(float startingR, float startingG, float startingB, float fadeTime, float endingR, float endingG, float endingB);
+
+
+yield DoFade(float startingR, float startingG, float startingB, float fadeTime, float endingR, float endingG, float endingB) {
+	float startTime = currentRobotTime;
+	float blend = 0.0;
+	int done = false;
+
+	if (fadeTime <= 0.0) {
+		done = true;
+	}
+
+	while (not done) {
+		blend = (currentRobotTime - startTime) / fadeTime;
+		if (blend > 1.0) {
+			blend = 1.0;
+		}
+
+		redLed = ((startingR * (1.0 - blend)) + (endingR * blend));
+		greenLed = ((startingG * (1.0 - blend)) + (endingG * blend));
+		blueLed = ((startingB * (1.0 - blend)) + (endingB * blend));
+
+		if (currentRobotTime >= startTime + fadeTime) {
+			done = true;
+		}
+
+		yield;
+	}
+}
+
+yield DoDelay(float duration)
+{
+	float finishTime = currentRobotTime + duration;
+	while (currentRobotTime < finishTime)
+	{
+		yield;
+		wait;
+	}
+}
+
+
+yield MainProgram()
+{
+	setRgbLed(255,0,255);
+	yield DoDelay(1);
+
+	yield DoDelay(1);
+	while( true ) {
+
+		yield DoFade( 255,127,0, 1, 255,0,0 );
+
+		yield DoFade( 255,0,0, 2, 0,255,0 );
+	}
+
+}
+
+yield MainProgram();
+
+...

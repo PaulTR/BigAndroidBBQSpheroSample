@@ -1,0 +1,35 @@
+<resources>
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+
+        <item name="android:textViewStyle">@style/SpheroTextViewStyle</item>
+        <item name="android:editTextStyle">@style/SpheroEditTextViewStyle</item>
+        <item name="android:buttonStyle">@style/SpheroButtonStyle</item>
+    </style>
+
+    <style name="AppTheme" parent="BaseAppTheme">
+
+    </style>
+
+    <style name="SpheroTextViewStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="SpheroEditTextViewStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="SpheroButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+</resources>
