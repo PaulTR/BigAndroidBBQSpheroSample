@@ -131,11 +131,13 @@ public class MainActivity extends AppCompatActivity implements RobotChangedState
     }
 
     private void startRobotDiscovery() {
-        try {
-            DualStackDiscoveryAgent.getInstance().startDiscovery( this );
-        } catch( DiscoveryException e ) {
-            Log.e("Sphero", e.getMessage());
-            e.printStackTrace();
+        if( !DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
+            try {
+                DualStackDiscoveryAgent.getInstance().startDiscovery(this);
+            } catch (DiscoveryException e) {
+                Log.e("Sphero", e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
